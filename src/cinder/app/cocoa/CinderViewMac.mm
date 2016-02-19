@@ -300,119 +300,139 @@ using namespace cinder::app;
 - (void)mouseDown:(NSEvent*)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
 	mods |= cinder::app::MouseEvent::LEFT_DOWN;
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::LEFT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::LEFT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseDown:&mouseEvent];
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
 	mods |= cinder::app::MouseEvent::RIGHT_DOWN;
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::RIGHT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::RIGHT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseDown:&mouseEvent];
 }
 
 - (void)otherMouseDown:(NSEvent *)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
 	mods |= cinder::app::MouseEvent::MIDDLE_DOWN;
- 	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::MIDDLE_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+ 	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::MIDDLE_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseDown:&mouseEvent];
 }
 
 - (void)mouseUp:(NSEvent*)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
 	mods |= cinder::app::MouseEvent::LEFT_DOWN;
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::LEFT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::LEFT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseUp:&mouseEvent];
 }
 
 - (void)rightMouseUp:(NSEvent*)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
 	mods |= cinder::app::MouseEvent::RIGHT_DOWN;
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::RIGHT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::RIGHT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseUp:&mouseEvent];
 }
 
 - (void)otherMouseUp:(NSEvent*)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
 	mods |= cinder::app::MouseEvent::MIDDLE_DOWN;
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::MIDDLE_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::MIDDLE_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseUp:&mouseEvent];
 }
 
 - (void)mouseMoved:(NSEvent*)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], 0, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], 0, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseMove:&mouseEvent];
 }
 
 - (void)rightMouseDragged:(NSEvent*)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
 	mods |= cinder::app::MouseEvent::RIGHT_DOWN;
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::RIGHT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::RIGHT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseDrag:&mouseEvent];
 }
 
 - (void)otherMouseDragged:(NSEvent*)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
 	mods |= cinder::app::MouseEvent::MIDDLE_DOWN;
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::MIDDLE_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::MIDDLE_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseDrag:&mouseEvent];
 }
 
 - (void)mouseDragged:(NSEvent*)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt			= [theEvent tilt];
+	float pressure			= [theEvent pressure];
 	
 	mods |= cinder::app::MouseEvent::LEFT_DOWN;
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::LEFT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], cinder::app::MouseEvent::LEFT_DOWN, x, y, mods, 0.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseDrag:&mouseEvent];
 }
 
@@ -420,11 +440,13 @@ using namespace cinder::app;
 {
 	float wheelDelta		= [theEvent deltaX] + [theEvent deltaY];
 	NSPoint curPoint		= [theEvent locationInWindow];
-	int x					= (curPoint.x - [self frame].origin.x);
-	int y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
+	float x					= (curPoint.x - [self frame].origin.x);
+	float y					= ([self frame].size.height - ( curPoint.y - [self frame].origin.y ));
 	int mods				= [self prepMouseEventModifiers:theEvent];
+	NSPoint tilt;
+	float pressure			= 0.0f;
 	
-	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], 0, x, y, mods, wheelDelta / 4.0f, (uint32_t)[theEvent modifierFlags] );
+	cinder::app::MouseEvent mouseEvent( [mDelegate getWindowRef], 0, x, y, mods, wheelDelta / 4.0f, (uint32_t)[theEvent modifierFlags], x, y, tilt.x, tilt.y, pressure);
 	[mDelegate mouseWheel:&mouseEvent];
 }
 

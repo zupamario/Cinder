@@ -34,8 +34,8 @@ namespace cinder { namespace app {
 class MouseEvent : public Event {
   public:
 	MouseEvent() : Event() {}
-	MouseEvent( const WindowRef &win, int initiator, int x, int y, unsigned int modifiers, float wheelIncrement, uint32_t nativeModifiers )
-		: Event( win ), mInitiator( initiator ), mPos( x, y ), mModifiers( modifiers ), mWheelIncrement( wheelIncrement ), mNativeModifiers( nativeModifiers )
+	MouseEvent( const WindowRef &win, int initiator, int x, int y, unsigned int modifiers, float wheelIncrement, uint32_t nativeModifiers, float subPosX, float subPosY, float tiltX, float tiltY, float pressure )
+		: Event( win ), mInitiator( initiator ), mPos( x, y ), mModifiers( modifiers ), mWheelIncrement( wheelIncrement ), mNativeModifiers( nativeModifiers ), mSubPos(subPosX, subPosY), mTilt(tiltX, tiltY), mPressure(pressure)
 	{}
 
 	//! Returns the X coordinate of the mouse event, measured in points
@@ -73,6 +73,17 @@ class MouseEvent : public Event {
 	
 	//! Returns the platform-native modifier mask
 	uint32_t	getNativeModifiers() const	{ return mNativeModifiers; }
+	
+	//! Returns the subpixel position if available.
+	const vec2&	getSubPos() const { return mSubPos; }
+	//! Returns the X coordinate in subpixel precision if available.
+	float		getSubX() const { return mSubPos.x; }
+	//! Returns the Y coordinate in subpixel precision if available.
+	float		getSubY() const { return mSubPos.y; }
+	//! Returns the tilt of pointing device like a pen if available.
+	vec2		getTilt() const { return mTilt; }
+	//! Returns the pressure of the mouse click if availble.
+	float		getPressure() const { return mPressure; }
 
 	enum {
 		LEFT_DOWN	= 0x0001,
@@ -95,6 +106,9 @@ class MouseEvent : public Event {
 	unsigned int	mModifiers;
 	float			mWheelIncrement;
 	uint32_t		mNativeModifiers;
+	vec2			mSubPos;
+	vec2			mTilt;
+	float			mPressure;
 };
 
 } } // namespace cinder::app
