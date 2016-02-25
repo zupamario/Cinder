@@ -176,10 +176,10 @@ static bool sIsEaglLayer;
 	}
 	else {
 		for( UITouch *touch in touches ) {
-			CGPoint pt = [touch locationInView:self];		
+			CGPoint pt = [touch locationInView:self];
 			int mods = 0;
 			mods |= MouseEvent::LEFT_DOWN;
-			MouseEvent mouseEvent( [mDelegate getWindowRef], MouseEvent::LEFT_DOWN, pt.x, pt.y, mods, 0.0f, 0, pt.x, pt.y, 0.0f, 0.0f, 0.0f );
+			MouseEvent mouseEvent( [mDelegate getWindowRef], MouseEvent::LEFT_DOWN, pt.x, pt.y, mods, 0.0f, 0, pt.x, pt.y, 0.0f, 0.0f, 1.0f );
 			[mDelegate mouseDown:&mouseEvent];
 		}
 	}
@@ -202,11 +202,13 @@ static bool sIsEaglLayer;
 	}
 	else {
 		for( UITouch *touch in touches ) {
-			CGPoint pt = [touch locationInView:self];
-			int mods = 0;
-			mods |= MouseEvent::LEFT_DOWN;
-			MouseEvent mouseEvent( [mDelegate getWindowRef], MouseEvent::LEFT_DOWN, pt.x, pt.y, mods, 0.0f, 0, pt.x, pt.y, 0.0f, 0.0f, 0.0f );
-			[mDelegate mouseDrag:&mouseEvent];
+			for (UITouch *coalescedTouch in [event coalescedTouchesForTouch:touch]) {
+				CGPoint pt = [coalescedTouch locationInView:self];
+				int mods = 0;
+				mods |= MouseEvent::LEFT_DOWN;
+				MouseEvent mouseEvent( [mDelegate getWindowRef], MouseEvent::LEFT_DOWN, pt.x, pt.y, mods, 0.0f, 0, pt.x, pt.y, 0.0f, 0.0f, 1.0f );
+				[mDelegate mouseDrag:&mouseEvent];
+			}
 		}
 	}
 }
@@ -229,10 +231,10 @@ static bool sIsEaglLayer;
 	}
 	else {
 		for( UITouch *touch in touches ) {
-			CGPoint pt = [touch locationInView:self];		
+			CGPoint pt = [touch locationInView:self];
 			int mods = 0;
 			mods |= MouseEvent::LEFT_DOWN;
-			MouseEvent mouseEvent( [mDelegate getWindowRef], MouseEvent::LEFT_DOWN, pt.x, pt.y, mods, 0.0f, 0, pt.x, pt.y, 0.0f, 0.0f, 0.0f );
+			MouseEvent mouseEvent( [mDelegate getWindowRef], MouseEvent::LEFT_DOWN, pt.x, pt.y, mods, 0.0f, 0, pt.x, pt.y, 0.0f, 0.0f, 1.0f );
 			[mDelegate mouseUp:&mouseEvent];
 		}
 	}
