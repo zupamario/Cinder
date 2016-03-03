@@ -148,28 +148,67 @@ static bool sIsEaglLayer;
 
 - (void)updateActiveTouches
 {
-	mActiveTouches.clear();
-	for( const auto &touch : mTouchIdMap ) {
-		CGPoint pt = [touch.first locationInView:self];
-		CGPoint prevPt = [touch.first previousLocationInView:self];
-		mActiveTouches.push_back( TouchEvent::Touch( vec2( pt.x, pt.y ), vec2( prevPt.x, prevPt.y ), touch.second, [touch.first timestamp], touch.first ) );
-	}
+	//mActiveTouches.clear();
+	//for( const auto &touch : mTouchIdMap ) {
+	//	CGPoint pt = [touch.first locationInView:self];
+	//	CGPoint prevPt = [touch.first previousLocationInView:self];
+	//	mActiveTouches.push_back( TouchEvent::Touch( vec2( pt.x, pt.y ), vec2( prevPt.x, prevPt.y ), touch.second, [touch.first timestamp], touch.first ) );
+	//}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Event handlers
 
+TouchEvent::Touch ReadCommonTouchData(UITouch* touch, UIView* view, uint32_t sequenceNumber)
+{
+	TouchEvent::Touch::Type type = [touch type] == UITouchTypeStylus ? TouchEvent::Touch::Type::Stylus : TouchEvent::Touch::Type::Finger;
+	NSTimeInterval timestamp = [touch timestamp];
+	CGFloat azimuthAngle = [touch azimuthAngleInView:view];
+	UITouchProperties estimatedProperties = [touch estimatedProperties];
+	UITouchProperties estimatedPropertiesExpectingUpdates = [touch estimatedPropertiesExpectingUpdates];
+	CGFloat altitudeAngle = [touch altitudeAngle];
+	float force = [touch force] / [touch maximumPossibleForce];
+	CGPoint pt = [touch locationInView:view];
+	CGPoint prevPt = [touch previousLocationInView:view];
+	
+	return TouchEvent::Touch( vec2( pt.x, pt.y ), vec2( prevPt.x, prevPt.y ), sequenceNumber, [touch timestamp], touch, type, force, azimuthAngle, altitudeAngle );
+}
+
+TouchEvent::Touch ReadTouchData(UIEvent* event, UITouch* touch, UIView* view, uint32_t sequenceNumber)
+{
+	TouchEvent::Touch baseTouch = ReadCommonTouchData(touch, view, sequenceNumber);
+	
+	std::vector<TouchEvent::Touch> coalescedTouches;
+	for (UITouch *coalescedTouch in [event coalescedTouchesForTouch:touch])
+	{
+		coalescedTouches.push_back(ReadCommonTouchData(coalescedTouch, view, sequenceNumber));
+	}
+	baseTouch.setCoalescedTouches(coalescedTouches);
+	
+	std::vector<TouchEvent::Touch> predictedTouches;
+	for (UITouch *predictedTouch in [event predictedTouchesForTouch:touch])
+	{
+		predictedTouches.push_back(ReadCommonTouchData(predictedTouch, view, sequenceNumber));
+	}
+	baseTouch.setPredictedTouches(predictedTouches);
+	
+	return baseTouch;
+}
+
 - (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
-	if( mApp->isMultiTouchEnabled() ) {
+	if( mApp->isMultiTouchEnabled() )
+	{
 		std::vector<TouchEvent::Touch> touchList;
-		for( UITouch *touch in touches ) {
-			CGPoint pt = [touch locationInView:self];
-			CGPoint prevPt = [touch previousLocationInView:self];
-			touchList.push_back( TouchEvent::Touch( vec2( pt.x, pt.y ), vec2( prevPt.x, prevPt.y ), [self addTouchToMap:touch], [touch timestamp], touch ) );
+		for( UITouch *touch in touches )
+		{
+			uint32_t sequenceNumber = [self addTouchToMap:touch];
+			TouchEvent::Touch theTouch = ReadTouchData(event, touch, self, sequenceNumber);
+			touchList.push_back( theTouch );
 		}
 		[self updateActiveTouches];
-		if( ! touchList.empty() ) {
+		if( ! touchList.empty() )
+		{
 			TouchEvent touchEvent( [mDelegate getWindowRef], touchList );
 			[mDelegate touchesBegan:&touchEvent];
 		}
@@ -187,15 +226,18 @@ static bool sIsEaglLayer;
 
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
 {
-	if( mApp->isMultiTouchEnabled() ) {
+	if( mApp->isMultiTouchEnabled() )
+	{
 		std::vector<TouchEvent::Touch> touchList;
-		for( UITouch *touch in touches ) {
-			CGPoint pt = [touch locationInView:self];
-			CGPoint prevPt = [touch previousLocationInView:self];			
-			touchList.push_back( TouchEvent::Touch( vec2( pt.x, pt.y ), vec2( prevPt.x, prevPt.y ), [self findTouchInMap:touch], [touch timestamp], touch ) );
+		for( UITouch *touch in touches )
+		{
+			uint32_t sequenceNumber = [self findTouchInMap:touch];
+			TouchEvent::Touch theTouch = ReadTouchData(event, touch, self, sequenceNumber);
+			touchList.push_back( theTouch );
 		}
 		[self updateActiveTouches];
-		if( ! touchList.empty() ) {
+		if( ! touchList.empty() )
+		{
 			TouchEvent touchEvent( [mDelegate getWindowRef], touchList );
 			[mDelegate touchesMoved:&touchEvent];
 		}
@@ -215,12 +257,14 @@ static bool sIsEaglLayer;
 
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 {
-	if( mApp->isMultiTouchEnabled() ) {
+	if( mApp->isMultiTouchEnabled() )
+	{
 		std::vector<TouchEvent::Touch> touchList;
-		for( UITouch *touch in touches ) {
-			CGPoint pt = [touch locationInView:self];
-			CGPoint prevPt = [touch previousLocationInView:self];
-			touchList.push_back( TouchEvent::Touch( vec2( pt.x, pt.y ), vec2( prevPt.x, prevPt.y ), [self findTouchInMap:touch], [touch timestamp], touch ) );
+		for( UITouch *touch in touches )
+		{
+			uint32_t sequenceNumber = [self findTouchInMap:touch];
+			TouchEvent::Touch theTouch = ReadTouchData(event, touch, self, sequenceNumber);
+			touchList.push_back( theTouch );
 			[self removeTouchFromMap:touch];
 		}
 		[self updateActiveTouches];
@@ -238,6 +282,11 @@ static bool sIsEaglLayer;
 			[mDelegate mouseUp:&mouseEvent];
 		}
 	}
+}
+
+- (void)touchesEstimatedPropertiesUpdated:(NSSet *)touches
+{
+	
 }
 
 - (void)touchesCancelled:(NSSet*)touches withEvent:(UIEvent*)event

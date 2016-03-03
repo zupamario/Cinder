@@ -35,9 +35,15 @@ class TouchEvent : public Event {
   public:
 	class Touch {
 	  public:
+		enum class Type
+		{
+			Finger,
+			Stylus
+		};
+		
 		Touch() {}
-		Touch( const vec2 &pos, const vec2 &prevPos, uint32_t id, double time, void *native )
-			: mPos( pos ), mPrevPos( prevPos ), mId( id ), mTime( time ), mNative( native ), mHandled( false )
+		Touch( const vec2 &pos, const vec2 &prevPos, uint32_t id, double time, void *native, Type type, float pressure, float azimuthAngle, float altitudeAngle )
+			: mPos( pos ), mPrevPos( prevPos ), mId( id ), mTime( time ), mNative( native ), mHandled( false ), mType(type), mPressure(pressure), mAzimuthAngle(azimuthAngle), mAltitudeAngle(altitudeAngle)
 		{}
 
 		//! Returns whether this Touch has been marked as handled.
@@ -62,8 +68,19 @@ class TouchEvent : public Event {
 		uint32_t	getId() const { return mId; }
 		//! Returns the timestamp associated with the touch, measured in seconds
 		double		getTime() const { return mTime; }
+		//! Returns a vector of coalesced positions which were fetched from the coalesced touches available since iOS 9
+		const std::vector<Touch>& getCoalescedTouches() const { return mCoalescedTouches; }
+		void setCoalescedTouches(const std::vector<Touch>& touches) { mCoalescedTouches = touches; }
+		//! Returns a vector of predicted positions which were fetched from the predicted touches available since iOS 9
+		const std::vector<Touch>& getPredictedTouches() const { return mPredictedTouches; }
+		void setPredictedTouches(const std::vector<Touch>& touches) { mPredictedTouches = touches; }
 		//! Returns a pointer to the OS-native object. This is a UITouch* on Cocoa Touch and a TOUCHPOINT* on MSW.
 		const void*	getNative() const { return mNative; }
+		
+		Type getType() const { return mType; }
+		float getPressure() const { return mPressure; }
+		float getAzimuthAngle() const { return mAzimuthAngle; }
+		float getAltitudeAngle() const { return mAltitudeAngle; }
 		
 	  private:
 		vec2		mPos, mPrevPos;
@@ -71,6 +88,12 @@ class TouchEvent : public Event {
 		bool        mHandled;
 		double		mTime;
 		void		*mNative;
+		Type mType;
+		float mPressure;
+		float mAzimuthAngle;
+		float mAltitudeAngle;
+		std::vector<Touch> mCoalescedTouches;
+		std::vector<Touch> mPredictedTouches;
 	};
 
 	TouchEvent()
