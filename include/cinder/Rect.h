@@ -160,6 +160,9 @@ class RectMapping {
 		
 	vec2	map( const vec2 &srcPoint ) const;
 	Rectf	map( const Rectf &srcRect ) const;
+    
+    const Rectf GetSrcRect() const { return mSrcRect; }
+    const Rectf GetDstRect() const { return mDstRect; }
 	
  private:
 	Rectf	mSrcRect, mDstRect;
