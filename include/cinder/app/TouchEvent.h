@@ -42,6 +42,10 @@ class TouchEvent : public Event {
 		};
 		
 		Touch() {}
+		Touch(const vec2 &pos, const vec2 &prevPos, uint32_t id, double time, void *native)
+			: mPos(pos), mPrevPos(prevPos), mId(id), mTime(time), mNative(native), mHandled(false) 
+		{}
+
 		Touch( const vec2 &pos, const vec2 &prevPos, uint32_t id, double time, void *native, Type type, float pressure, float azimuthAngle, float altitudeAngle )
 			: mPos( pos ), mPrevPos( prevPos ), mId( id ), mTime( time ), mNative( native ), mHandled( false ), mType(type), mPressure(pressure), mAzimuthAngle(azimuthAngle), mAltitudeAngle(altitudeAngle)
 		{}

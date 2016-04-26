@@ -845,7 +845,8 @@ LRESULT CALLBACK WndProc(	HWND	mWnd,			// Handle For This Window
 		case WM_LBUTTONDOWN: {
 			::SetCapture( mWnd );
 			impl->mIsDragging = true;
-			MouseEvent event( impl->getWindow(), MouseEvent::LEFT_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ) );
+			MouseEvent event( impl->getWindow(), MouseEvent::LEFT_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ),
+				float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 			impl->getWindow()->emitMouseDown( &event );
 			return 0;
 		}
@@ -853,7 +854,8 @@ LRESULT CALLBACK WndProc(	HWND	mWnd,			// Handle For This Window
 		case WM_RBUTTONDOWN: {
 			::SetCapture( mWnd );
 			impl->mIsDragging = true;
-			MouseEvent event( impl->getWindow(), MouseEvent::RIGHT_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ) );
+			MouseEvent event( impl->getWindow(), MouseEvent::RIGHT_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ),
+				float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 			impl->getWindow()->emitMouseDown( &event );
 			return 0;
 		}
@@ -861,7 +863,8 @@ LRESULT CALLBACK WndProc(	HWND	mWnd,			// Handle For This Window
 		case WM_MBUTTONDOWN: {
 			::SetCapture( mWnd );
 			impl->mIsDragging = true;		
-			MouseEvent event( impl->getWindow(), MouseEvent::MIDDLE_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ) );
+			MouseEvent event( impl->getWindow(), MouseEvent::MIDDLE_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ),
+				float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 			impl->getWindow()->emitMouseDown( &event );
 			return 0;
 		}
@@ -869,7 +872,8 @@ LRESULT CALLBACK WndProc(	HWND	mWnd,			// Handle For This Window
 		case WM_LBUTTONUP: {
 			::ReleaseCapture();
 			impl->mIsDragging = false;
-			MouseEvent event( impl->getWindow(), MouseEvent::LEFT_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ) );
+			MouseEvent event( impl->getWindow(), MouseEvent::LEFT_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ),
+				float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 			impl->getWindow()->emitMouseUp( &event );
 			return 0;
 		}
@@ -877,7 +881,8 @@ LRESULT CALLBACK WndProc(	HWND	mWnd,			// Handle For This Window
 		case WM_RBUTTONUP: {
 			::ReleaseCapture();
 			impl->mIsDragging = false;		
-			MouseEvent event( impl->getWindow(), MouseEvent::RIGHT_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ) );
+			MouseEvent event( impl->getWindow(), MouseEvent::RIGHT_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ),
+				float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 			impl->getWindow()->emitMouseUp( &event );
 			return 0;
 		}
@@ -885,7 +890,8 @@ LRESULT CALLBACK WndProc(	HWND	mWnd,			// Handle For This Window
 		case WM_MBUTTONUP: {
 			::ReleaseCapture();
 			impl->mIsDragging = false;
-			MouseEvent event( impl->getWindow(), MouseEvent::MIDDLE_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ) );
+			MouseEvent event( impl->getWindow(), MouseEvent::MIDDLE_DOWN, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ),
+				float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 			impl->getWindow()->emitMouseUp( &event );
 			return 0;
 		}
@@ -894,25 +900,29 @@ LRESULT CALLBACK WndProc(	HWND	mWnd,			// Handle For This Window
 			POINT pt = { ((int)(short)LOWORD(lParam)), ((int)(short)HIWORD(lParam)) };
 			::MapWindowPoints( NULL, mWnd, &pt, 1 );
 			MouseEvent event( impl->getWindow(), 0, pt.x, pt.y, prepMouseEventModifiers( wParam ),
-								GET_WHEEL_DELTA_WPARAM( wParam ) / 120.0f, static_cast<unsigned int>( wParam ) );
+								GET_WHEEL_DELTA_WPARAM( wParam ) / 120.0f, static_cast<unsigned int>( wParam ),
+								float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 			impl->getWindow()->emitMouseWheel( &event );
 		}
 		break;
 		case WM_KILLFOCUS:
 			// if we lose capture during a drag, post a mouseup event as a notifier
 			if( impl->mIsDragging ) {
-				MouseEvent event( impl->getWindow(), 0, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ) );
+				MouseEvent event( impl->getWindow(), 0, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ),
+					float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 				impl->getWindow()->emitMouseUp( &event );
 			}
 			impl->mIsDragging = false;
 		break;
 		case WM_MOUSEMOVE: {
 			if( impl->mIsDragging ) {
-				MouseEvent event( impl->getWindow(), 0, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ) );
+				MouseEvent event( impl->getWindow(), 0, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ),
+					float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 				impl->getWindow()->emitMouseDrag( &event );						
 			}
 			else {
-				MouseEvent event( impl->getWindow(), 0, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ) );
+				MouseEvent event( impl->getWindow(), 0, LOSHORT(lParam), HISHORT(lParam), prepMouseEventModifiers( wParam ), 0.0f, static_cast<unsigned int>( wParam ),
+					float(LOSHORT(lParam)), float(HISHORT(lParam)), 0.f, 0.f, 1.f);
 				impl->getWindow()->emitMouseMove( &event );
 			}
 		}
