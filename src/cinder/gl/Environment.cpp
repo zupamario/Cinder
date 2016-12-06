@@ -115,7 +115,12 @@ ContextRef Environment::createSharedContext( const Context *sharedContext )
 	EAGLContext *prevContext = [EAGLContext currentContext];
 	EAGLContext *sharedContextEagl = sharedContextPlatformData->mEaglContext;
 	EAGLSharegroup *sharegroup = sharedContextEagl.sharegroup;
-	EAGLContext *eaglContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:sharegroup];
+#if defined( CINDER_GL_ES_3 )
+    auto api = kEAGLRenderingAPIOpenGLES3;
+#else
+    auto api = kEAGLRenderingAPIOpenGLES2;
+#endif
+	EAGLContext *eaglContext = [[EAGLContext alloc] initWithAPI:api sharegroup:sharegroup];
 	[EAGLContext setCurrentContext:eaglContext];
 	shared_ptr<Context::PlatformData> platformData = shared_ptr<Context::PlatformData>( new PlatformDataIos( eaglContext ), destroyPlatformData );
 #elif defined( CINDER_GL_ANGLE )
