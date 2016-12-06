@@ -191,6 +191,20 @@ using namespace cinder::app;
 	}
 }
 
+- (void)pauseAnimation
+{
+	if (mDisplayLink) {
+		[mDisplayLink setPaused:YES];
+	}
+}
+
+- (void)resumeAnimation
+{
+	if (mDisplayLink) {
+		[mDisplayLink setPaused:NO];
+	}
+}
+
 - (void)screenDidConnect:(NSNotification *)notification
 {
 	DisplayRef connected = app::PlatformCocoa::get()->findDisplayFromUiScreen( (UIScreen*)[notification object] );

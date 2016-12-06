@@ -220,6 +220,9 @@ class AppCocoaTouch : public AppBase {
 	template<typename AppT>
 	static void main( const RendererRef &defaultRenderer, const char *title, int argc, char * const argv[], const SettingsFn &settingsFn = SettingsFn() );
 	//! \endcond
+	
+	void pauseAnimation() override;
+	void resumeAnimation() override;
 
   protected:
 	void	launch() override;

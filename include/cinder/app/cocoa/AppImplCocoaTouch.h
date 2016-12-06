@@ -86,6 +86,8 @@
 - (void)batteryLevelChange:(NSNotificationCenter *)notification;
 - (void)startAnimation;
 - (void)stopAnimation;
+- (void)pauseAnimation;
+- (void)resumeAnimation;
 - (cinder::app::InterfaceOrientation)convertInterfaceOrientation:(UIInterfaceOrientation)orientation;
 
 @end // AppImplCocoaTouch

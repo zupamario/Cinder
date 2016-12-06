@@ -66,7 +66,7 @@ void AppCocoaTouch::launch()
 
 	::UIApplicationMain( argc, argv, nil, ::NSStringFromClass( [AppDelegateImpl class] ) );
 }
-
+    
 WindowRef AppCocoaTouch::createWindow( const Window::Format &format )
 {
 	return [mImpl createWindow:format];
@@ -230,6 +230,16 @@ void AppCocoaTouch::setFullScreen( bool fullScreen, const FullScreenOptions &opt
 void AppCocoaTouch::quit()
 {
 	return; // no effect on iOS
+}
+
+void AppCocoaTouch::pauseAnimation()
+{
+	[mImpl pauseAnimation];
+}
+
+void AppCocoaTouch::resumeAnimation()
+{
+	[mImpl resumeAnimation];
 }
 
 void AppCocoaTouch::enablePowerManagement( bool powerManagement )
