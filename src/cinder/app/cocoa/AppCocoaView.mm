@@ -77,6 +77,7 @@ using namespace cinder::app;
 - (void)touchesEnded:(cinder::app::TouchEvent*)event;
 - (const std::vector<cinder::app::TouchEvent::Touch>&)getActiveTouches;
 - (void)fileDrop:(cinder::app::FileDropEvent*)event;
+- (void)tabletProximity:(cinder::app::TabletProximityEvent *)event;
 - (cinder::app::WindowRef)getWindowRef;
 
 @end
@@ -196,6 +197,13 @@ using namespace cinder::app;
 	[mAppImpl setActiveWindow:self];
 	event->setWindow( mWindowRef );
 	mWindowRef->emitFileDrop( event );
+}
+
+- (void)tabletProximity:(cinder::app::TabletProximityEvent *)event
+{
+	[mAppImpl setActiveWindow:self];
+	event->setWindow( mWindowRef );
+	mWindowRef->emitTabletProximity( event );
 }
 
 - (cinder::app::WindowRef)getWindowRef

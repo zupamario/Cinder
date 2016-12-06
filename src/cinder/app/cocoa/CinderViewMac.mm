@@ -297,6 +297,28 @@ using namespace cinder::app;
     }
 }
 
+- (void)tabletProximity:(NSEvent *)event
+{
+	//int capabilityMask = [event capabilityMask];
+	//int deviceId = [event deviceID];
+	BOOL isEnteringProximity = [event isEnteringProximity];
+	//int pointingDeviceId = [event pointingDeviceID];
+	//int pointingDeviceSerialNumber = [event pointingDeviceSerialNumber];
+	NSPointingDeviceType deviceType = [event pointingDeviceType];
+	cinder::app::TabletProximityEvent proximityEvent(isEnteringProximity, deviceType == NSPointingDeviceTypeEraser);
+	[mDelegate tabletProximity:&proximityEvent];
+	//int systemTabletId = [event systemTabletID];
+	//int tabletId = [event tabletID];
+	//UInt64 uniqueId = [event uniqueID];
+	//int vendorId = [event vendorID];
+	//int vendorPointingDeviceType = [event vendorPointingDeviceType];
+}
+
+- (void)tabletPoint:(NSEvent *)event
+{
+	
+}
+
 - (void)mouseDown:(NSEvent*)theEvent
 {
 	NSPoint curPoint		= [theEvent locationInWindow];
@@ -485,7 +507,7 @@ using namespace cinder::app;
    	std::vector<cinder::app::TouchEvent::Touch> touchList;
 	double eventTime = cinder::app::getElapsedSeconds();
 	for( const auto &prevPt : mTouchPrevPointMap ) {
-		touchList.push_back( cinder::app::TouchEvent::Touch( prevPt.second, prevPt.second, prevPt.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), nil ) );
+		//touchList.push_back( cinder::app::TouchEvent::Touch( prevPt.second, prevPt.second, prevPt.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), nil ) );
 	}
 
 	if( ! touchList.empty() ) {
@@ -569,7 +591,7 @@ using namespace cinder::app;
 		NSPoint rawPt = [touch normalizedPosition];
 		cinder::vec2 pt( rawPt.x * width, height - rawPt.y * height );
 		std::pair<uint32_t,cinder::vec2> prev = [self updateTouch:touch withPoint:pt];
-		mActiveTouches.push_back( cinder::app::TouchEvent::Touch( pt, prev.second, prev.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
+		//mActiveTouches.push_back( cinder::app::TouchEvent::Touch( pt, prev.second, prev.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
 	}
 }
 
@@ -588,7 +610,7 @@ using namespace cinder::app;
 	for( NSTouch *touch in touches ) {
 		NSPoint rawPt = [touch normalizedPosition];
 		cinder::vec2 pt( rawPt.x * width, height - rawPt.y * height );
-		touchList.push_back( cinder::app::TouchEvent::Touch( pt, pt, [self addTouchToMap:touch withPoint:pt], eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
+		//touchList.push_back( cinder::app::TouchEvent::Touch( pt, pt, [self addTouchToMap:touch withPoint:pt], eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
 	}
 	[self updateActiveTouches:event];
 	if( mDelegate && ( ! touchList.empty() ) ) {
@@ -608,7 +630,7 @@ using namespace cinder::app;
 		NSPoint rawPt = [touch normalizedPosition];
 		cinder::vec2 pt( rawPt.x * width, height - rawPt.y * height );
 		std::pair<uint32_t,cinder::vec2> prev = [self updateTouch:touch withPoint:pt];
-		touchList.push_back( cinder::app::TouchEvent::Touch( pt, prev.second, prev.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
+		//touchList.push_back( cinder::app::TouchEvent::Touch( pt, prev.second, prev.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
 	}
 	[self updateActiveTouches:event];
 	if( mDelegate && ( ! touchList.empty() ) ) {
@@ -628,7 +650,7 @@ using namespace cinder::app;
 		NSPoint rawPt = [touch normalizedPosition];
 		cinder::vec2 pt( rawPt.x * width, height - rawPt.y * height );
 		std::pair<uint32_t,cinder::vec2> prev = [self updateTouch:touch withPoint:pt];
-		touchList.push_back( cinder::app::TouchEvent::Touch( pt, prev.second, prev.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
+		//touchList.push_back( cinder::app::TouchEvent::Touch( pt, prev.second, prev.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
 		[self removeTouchFromMap:touch];
 	}
 
@@ -650,7 +672,7 @@ using namespace cinder::app;
 		NSPoint rawPt = [touch normalizedPosition];
 		cinder::vec2 pt( rawPt.x * width, height - rawPt.y * height );
 		std::pair<uint32_t,cinder::vec2> prev = [self updateTouch:touch withPoint:pt];
-		touchList.push_back( cinder::app::TouchEvent::Touch( pt, prev.second, prev.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
+		//touchList.push_back( cinder::app::TouchEvent::Touch( pt, prev.second, prev.first, eventTime, std::vector<glm::vec2>(), std::vector<glm::vec2>(), touch ) );
 		[self removeTouchFromMap:touch];
 	}
 

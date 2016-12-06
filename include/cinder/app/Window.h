@@ -99,6 +99,7 @@ typedef	 signals::Signal<void( MouseEvent & ),		CollectorEvent<MouseEvent> >		Ev
 typedef	 signals::Signal<void( TouchEvent & ),		CollectorEvent<TouchEvent> >		EventSignalTouch;
 typedef	 signals::Signal<void( KeyEvent & ),		CollectorEvent<KeyEvent> >			EventSignalKey;
 typedef	 signals::Signal<void( FileDropEvent & ),	CollectorEvent<FileDropEvent> >		EventSignalFileDrop;
+typedef	 signals::Signal<void( TabletProximityEvent & ),	CollectorEvent<TabletProximityEvent> >		EventSignalTabletProximity;
 typedef	 signals::Signal<void()>														EventSignalWindow;
 
 //! Thrown when an operation is performed on a WindowRef which refers to an invalid Window
@@ -407,6 +408,9 @@ class Window : public std::enable_shared_from_this<Window> {
 
 	EventSignalFileDrop&	getSignalFileDrop() { return mSignalFileDrop; }
 	void					emitFileDrop( FileDropEvent *event );
+	
+	EventSignalTabletProximity&	getSignalTabletProximity() { return mSignalTabletProximity; }
+	void					emitTabletProximity( TabletProximityEvent *event );
 
 	//! Returns the window-specific data associated with this Window.
 	template<typename T>
@@ -472,6 +476,7 @@ class Window : public std::enable_shared_from_this<Window> {
 	EventSignalKey			mSignalKeyDown, mSignalKeyUp;
 	EventSignalWindow		mSignalDraw, mSignalPostDraw, mSignalMove, mSignalResize, mSignalDisplayChange, mSignalClose;
 	EventSignalFileDrop		mSignalFileDrop;
+	EventSignalTabletProximity mSignalTabletProximity;
 	
 #if defined( CINDER_COCOA )
   #if defined( __OBJC__ )

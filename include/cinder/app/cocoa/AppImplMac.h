@@ -38,6 +38,8 @@
 
 #import <IOKit/pwr_mgt/IOPMLib.h>
 
+#import <WacomMultiTouch/WacomMultiTouch.h>
+
 @class CinderWindow; // inherits from NSWindow
 @class WindowImplBasicCocoa;
 
@@ -90,16 +92,31 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+@interface WacomTouchableWindow : NSWindow <WacomMTWindowFingerRegistration>
+{
+	WindowImplBasicCocoa* mWindowBase;
+}
+@property(retain, nonatomic) WindowImplBasicCocoa *baseWindow;
+
+///Receives Finger data
+-(void) FingerDataAvailable:(WacomMTFingerCollection *)packet data:(void *)userData;
+
+@end
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 @interface WindowImplBasicCocoa : NSObject<NSWindowDelegate, CinderViewDelegate, WindowImplCocoa> {
   @public
 	AppImplMac*					mAppImpl;
-	NSWindow*					mWin;
+	WacomTouchableWindow*		mWin;
 	NSString*					mTitle; // title is cached because sometimes we need to restore it after changing window border styles
 	CinderViewMac*				mCinderView;
 	cinder::app::WindowRef		mWindowRef;
 	cinder::DisplayRef			mDisplay;
 	cinder::ivec2				mSize, mPos;
 	BOOL						mResizable, mBorderless, mAlwaysOnTop, mHidden;
+	bool mWacomPenInProximity;
+	bool mIsMouseDown;
 }
 
 
@@ -145,6 +162,10 @@
 - (const std::vector<cinder::app::TouchEvent::Touch> &)getActiveTouches;
 - (void)fileDrop:(cinder::app::FileDropEvent *)event;
 - (cinder::app::WindowRef)getWindowRef;
+
+- (void) deviceDidAttachWithCapabilities:(WacomMTCapability)deviceInfo;
+- (void) deviceDidDetach:(int)deviceID;
+- (void) FingerDataAvailable:(WacomMTFingerCollection *)packet;
 
 + (WindowImplBasicCocoa *)instantiate:(cinder::app::Window::Format)winFormat withAppImpl:(AppImplMac *)appImpl;
 

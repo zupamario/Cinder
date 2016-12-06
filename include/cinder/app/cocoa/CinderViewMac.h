@@ -31,6 +31,8 @@
 #import <AppKit/NSTouch.h> 
 #include "cinder/app/TouchEvent.h"
 
+#import <WacomMultiTouch/WacomMultiTouch.h>
+
 #include <map>
 
 @protocol CinderViewDelegate
@@ -48,6 +50,7 @@
 - (void)touchesMoved:(cinder::app::TouchEvent*)event;
 - (void)touchesEnded:(cinder::app::TouchEvent*)event;
 - (void)fileDrop:(cinder::app::FileDropEvent*)event;
+- (void)tabletProximity:(cinder::app::TabletProximityEvent*)event;
 - (cinder::app::WindowRef)getWindowRef;
 @end
 
@@ -95,6 +98,5 @@
 - (const std::vector<cinder::app::TouchEvent::Touch>&)getActiveTouches;
 
 - (float)contentScaleFactor;
-
 
 @end

@@ -35,6 +35,11 @@
 using namespace cinder;
 using namespace cinder::app;
 
+// Prototypes
+void WacomAttachCallback(WacomMTCapability deviceInfo, void *userInfo);
+void WacomDetachCallback(int deviceID, void *userInfo);
+int WacomFingerCallback(WacomMTFingerCollection *fingerPacket, void *userData);
+
 // This seems to be missing for unknown reasons
 @interface NSApplication(MissingFunction)
 - (void)setAppleMenu:(NSMenu *)menu;
@@ -298,6 +303,11 @@ using namespace cinder::app;
 		// this counts on windowWillCloseNotification: firing and in turn calling releaseWindow
 		[[mWindows lastObject] close];
 	}
+	
+	if(WacomMTQuit != NULL) // check API framework availability
+	{
+		WacomMTQuit();
+	}
 
 	mApp->emitCleanup();
 	delete mApp;
@@ -418,6 +428,19 @@ using namespace cinder::app;
 
 - (void)touchesCancelledWithEvent:(NSEvent *)event
 {
+}
+
+#pragma mark -
+#pragma mark CALLBACKS
+#pragma mark -
+
+@end
+
+@implementation WacomTouchableWindow
+
+-(void) FingerDataAvailable:(WacomMTFingerCollection *)packet data:(void *)userData
+{
+	[_baseWindow FingerDataAvailable:packet];
 }
 
 @end
@@ -692,6 +715,7 @@ using namespace cinder::app;
 
 - (void)mouseDown:(MouseEvent *)event
 {
+	mIsMouseDown = true;
 	if( ! ((PlatformCocoa*)Platform::get())->isInsideModalLoop() ) {
 		[mAppImpl setActiveWindow:self];
 		event->setWindow( mWindowRef );
@@ -710,6 +734,7 @@ using namespace cinder::app;
 
 - (void)mouseUp:(MouseEvent *)event
 {
+	mIsMouseDown = false;
 	if( ! ((PlatformCocoa*)Platform::get())->isInsideModalLoop() ) {
 		[mAppImpl setActiveWindow:self];
 		event->setWindow( mWindowRef );
@@ -794,10 +819,143 @@ using namespace cinder::app;
 	}
 }
 
+- (void)tabletProximity:(cinder::app::TabletProximityEvent *)event
+{
+	mWacomPenInProximity = event->isEnteringProximity();
+	if( ! ((PlatformCocoa*)Platform::get())->isInsideModalLoop() ) {
+		[mAppImpl setActiveWindow:self];
+		event->setWindow( mWindowRef );
+		mWindowRef->emitTabletProximity( event );
+	}
+}
+
+- (void)FingerDataAvailable:(WacomMTFingerCollection *)packet
+{
+	if (packet)
+	{
+		//std::cout << "Finger data available" << std::endl;
+		//std::cout << "DeviceID: " << packet->DeviceID << " Version: " << packet->Version << " FrameNumber: " << packet->FrameNumber << " Count: " << packet->FingerCount << std::endl;
+		
+		WacomMTFinger* fingers = packet->Fingers;
+		std::vector<TouchEvent::Touch> began;
+		std::vector<TouchEvent::Touch> moved;
+		std::vector<TouchEvent::Touch> ended;
+		
+		WacomMTCapability capabilities;
+		WacomMTGetDeviceCapabilities(packet->DeviceID, &capabilities);
+		
+		float windowX = mWin.frame.origin.x - mWin.screen.frame.origin.x;
+		float windowY = mWin.frame.origin.y - mWin.screen.frame.origin.y;
+		float windowBorder = mWin.frame.size.height - mCinderView.frame.size.height;
+		float borderTop = mWin.screen.frame.size.height - windowY - mWin.frame.size.height + windowBorder;
+		
+		
+		if (fingers)
+		{
+			for (uint32_t i = 0; i < packet->FingerCount; ++i)
+			{
+				WacomMTFinger& finger = fingers[i];
+				
+				int fingerId = finger.FingerID;
+				float rawX = finger.X;
+				float rawY = finger.Y;
+				float width = finger.Width;
+				float height = finger.Height;
+				unsigned short sensitivity = finger.Sensitivity;
+				float orientation = finger.Orientation;
+				bool confidence = finger.Confidence;
+				WacomMTFingerState state = finger.TouchState;
+				
+				// Very simple logic for rejecting non confident touches.
+				// Note that confidence always goes to 0 when pen and touch is used simultaneously.
+				bool isEndingTouch = (state == WMTFingerStateUp || state == WMTFingerStateNone);
+				if (!confidence && (mIsMouseDown || !mWacomPenInProximity) && !isEndingTouch) {
+					continue;
+				}
+				
+				float screenXFromLeft = rawX - capabilities.LogicalOriginX;
+				float screenYFromTop = rawY - capabilities.LogicalOriginY;
+				float x = screenXFromLeft - windowX;
+				float y = screenYFromTop - borderTop;
+				
+				
+				//std::cout << "Finger #" << i << ":" << std::endl;
+				//std::cout << "Id: " << fingerId << " rawX: " << rawX << " rawY: " << rawY << " screenXFromLeft: " << screenXFromLeft << " screenYFromTop: " << screenYFromTop << " x: " << x << " y: " << y << " width: " << width << " height: " << height << " sensitivity: " << sensitivity << " orientation: " << orientation << " confidence: " << confidence << " state: " << state << std::endl;
+				
+				TouchEvent::Touch touch(glm::vec2(x, y), glm::vec2(x, y), static_cast<uint32_t>(fingerId), 0.0, NULL, TouchEvent::Touch::Type::Finger, 1.0f, 0.0f, 0.0f);
+				
+				//NSLog(@"%@", NSStringFromRect(mWin.frame));
+				//NSLog(@"%@", NSStringFromRect(mCinderView.frame));
+				//NSLog(@"%@", NSStringFromRect(mWin.screen.frame));
+				//std::cout << "LogicalOriginX: " << capabilities.LogicalOriginX << " LogicalOriginY: " << capabilities.LogicalOriginY << " LogicalWidth: " << capabilities.LogicalWidth << " LogicalHeight: " << capabilities.LogicalHeight << std::endl;
+				
+				switch (state) {
+					case WMTFingerStateDown:
+						began.push_back(touch);
+						break;
+					case WMTFingerStateHold:
+						moved.push_back(touch);
+						break;
+					case WMTFingerStateUp:
+					case WMTFingerStateNone:
+						ended.push_back(touch);
+						break;
+					default:
+						break;
+				}
+ 			}
+		}
+		if (!began.empty()) {
+			TouchEvent touchEvent(mWindowRef, began);
+			[self touchesBegan:&touchEvent];
+		}
+		if (!moved.empty()) {
+			TouchEvent touchEvent(mWindowRef, moved);
+			[self touchesMoved:&touchEvent];
+		}
+		if (!ended.empty()) {
+			TouchEvent touchEvent(mWindowRef, ended);
+			[self touchesEnded:&touchEvent];
+		}
+	}
+}
+
 - (app::WindowRef)getWindowRef
 {
 	return mWindowRef;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// deviceDidAttachWithCapabilities:
+//
+// Purpose:		Called by the touch API callback
+//
+- (void) deviceDidAttachWithCapabilities:(WacomMTCapability)deviceInfo
+{
+	//WacomMTError err = WacomMTRegisterFingerReadID(deviceInfo.DeviceID, WMTProcessingModeNone, self->mWin, 1);
+	//if (err != WMTErrorSuccess) {
+	//	CI_LOG_E("Registering Wacom finger callback failed with error code " << err);
+	//}
+	
+	WacomMTError err = WacomMTRegisterFingerReadCallback(deviceInfo.DeviceID, NULL, WMTProcessingModeNone, WacomFingerCallback, self->mWin);
+	if (err != WMTErrorSuccess) {
+		CI_LOG_E("Registering Wacom finger callback failed with error code " << err);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// deviceDidDetach:
+//
+// Purpose:		Called by the touch API callback.
+//
+- (void) deviceDidDetach:(int)deviceID
+{
+	//WacomMTUnRegisterFingerReadID(self->mWin);
+	
+	WacomMTUnRegisterFingerReadCallback(deviceID, NULL, WMTProcessingModeNone, NULL);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 + (WindowImplBasicCocoa *)instantiate:(Window::Format)winFormat withAppImpl:(AppImplMac *)appImpl
 {
@@ -810,6 +968,7 @@ using namespace cinder::app;
 	winImpl->mResizable = winFormat.isResizable();
 	winImpl->mBorderless = winFormat.isBorderless();
 	winImpl->mAlwaysOnTop = winFormat.isAlwaysOnTop();
+	winImpl->mWacomPenInProximity = false;
 
 	if( ! winImpl->mDisplay )
 		winImpl->mDisplay = Display::getMainDisplay();
@@ -834,11 +993,12 @@ using namespace cinder::app;
 	else
 		styleMask = NSTitledWindowMask;
 
-	winImpl->mWin = [[CinderWindow alloc] initWithContentRect:winRect
+	winImpl->mWin = [[WacomTouchableWindow alloc] initWithContentRect:winRect
 													styleMask:styleMask
 													  backing:NSBackingStoreBuffered
 														defer:NO
 													   screen:std::dynamic_pointer_cast<cinder::DisplayMac>( winImpl->mDisplay )->getNsScreen()];
+	winImpl->mWin.baseWindow = winImpl;
 
 	NSRect contentRect = [winImpl->mWin contentRectForFrameRect:[winImpl->mWin frame]];
 	winImpl->mSize.x = (int)contentRect.size.width;
@@ -886,8 +1046,111 @@ using namespace cinder::app;
 
 	// make this window the active window
 	appImpl->mActiveWindow = winImpl;
+	
+	// The WacomMultiTouch framework is weak-linked. That means the application
+	// can load if the framework is not present. However, we must take care not
+	// to call framework functions if the framework wasn't loaded.
+	//
+	// You can set WacomMultiTouch.framework to be weak-linked in your own
+	// project by opening the Info window for your target, going to the General
+	// tab. In the Linked Libraries list, change the Type of
+	// WacomMultiTouch.framework to "Weak".
+	
+	
+	if(WacomMTInitialize != NULL)
+	{
+		WacomMTError err = WacomMTInitialize(WACOM_MULTI_TOUCH_API_VERSION);
+		if(err == WMTErrorSuccess)
+		{
+			WacomMTRegisterAttachCallback(WacomAttachCallback, winImpl);
+			WacomMTRegisterDetachCallback(WacomDetachCallback, winImpl);
+			
+			int   deviceIDs[30]  = {};
+			int   deviceCount    = 0;
+			int   counter        = 0;
+			
+			// Ask the Wacom API for all connected touch API-capable devices.
+			// Pass a comfortably large buffer so you don't have to call this method
+			// twice.
+			deviceCount = WacomMTGetAttachedDeviceIDs(deviceIDs, sizeof(deviceIDs));
+			
+			if(deviceCount > 30)
+			{
+				// With a number as big as 30, this will never actually happen.
+				NSLog(@"More tablets connected than would fit in the supplied buffer. Will need to reallocate buffer!");
+			}
+			else
+			{
+				// Repopulate with current devices
+				for(counter = 0; counter < deviceCount; counter++)
+				{
+					int                  deviceID       = deviceIDs[counter];
+					WacomMTCapability    capabilities   = {};
+					NSMutableDictionary  *deviceRecord  = [[NSMutableDictionary alloc] init];
+					
+					WacomMTGetDeviceCapabilities(deviceID, &capabilities);
+					
+					[deviceRecord setObject:[NSNumber numberWithInt:deviceID] forKey:@"deviceID"];
+					[deviceRecord setObject:[NSNumber numberWithInt:capabilities.FingerMax] forKey:@"fingerCount"];
+					[deviceRecord setObject:[NSString stringWithFormat:@"%d x %d", capabilities.ReportedSizeX, capabilities.ReportedSizeY] forKey:@"scanSize"];
+					
+					switch(capabilities.Type)
+					{
+						case WMTDeviceTypeIntegrated:
+							[deviceRecord setObject:@"Integrated" forKey:@"type"];
+							break;
+							
+						case WMTDeviceTypeOpaque:
+							[deviceRecord setObject:@"Opaque" forKey:@"type"];
+							break;
+					}
+					
+					[deviceRecord release];
+				}
+			}
+		}
+		else
+		{
+			CI_LOG_E("Failed to initialize Wacom Multi Touch API");
+		}
+	}
 
 	return [winImpl autorelease];
 }
 
 @end
+
+#pragma mark -
+#pragma mark WACOM TOUCH API C-FUNCTION CALLBACKS
+#pragma mark -
+
+//////////////////////////////////////////////////////////////////////////////
+// WacomAttachCallback()
+//
+// Purpose:		A new device was connected.
+//
+void WacomAttachCallback(WacomMTCapability deviceInfo, void *userInfo)
+{
+	WindowImplBasicCocoa *controller = (WindowImplBasicCocoa *)userInfo;
+	[controller deviceDidAttachWithCapabilities:deviceInfo];
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
+// WacomDetachCallback()
+//
+// Purpose:		A device was unplugged.
+//
+void WacomDetachCallback(int deviceID, void *userInfo)
+{
+	WindowImplBasicCocoa *controller = (WindowImplBasicCocoa *)userInfo;
+	[controller deviceDidDetach:deviceID];
+}
+
+int WacomFingerCallback(WacomMTFingerCollection *fingerPacket, void *userData)
+{
+	WacomTouchableWindow *window = (WacomTouchableWindow *)userData;
+	[window FingerDataAvailable:fingerPacket data:NULL];
+	return 0;
+}

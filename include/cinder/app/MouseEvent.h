@@ -29,12 +29,23 @@
 
 
 namespace cinder { namespace app {
+	
+class TabletProximityEvent : public Event {
+	public:
+		TabletProximityEvent() : Event() {}
+		TabletProximityEvent(bool isEnteringProximity, bool isEraser) : m_isEnteringProximity(isEnteringProximity), m_isEraser(isEraser) {}
+	bool isEnteringProximity() const { return m_isEnteringProximity; }
+	bool isEraser() const { return m_isEraser; }
+	private:
+		bool m_isEnteringProximity;
+		bool m_isEraser;
+};
 
 //! Represents a mouse event
 class MouseEvent : public Event {
   public:
 	MouseEvent() : Event() {}
-	MouseEvent( const WindowRef &win, int initiator, int x, int y, unsigned int modifiers, float wheelIncrement, uint32_t nativeModifiers, float subPosX, float subPosY, float tiltX, float tiltY, float pressure )
+	MouseEvent( const WindowRef &win, int initiator, int x, int y, unsigned int modifiers, float wheelIncrement, uint32_t nativeModifiers, float subPosX, float subPosY, float tiltX, float tiltY, float pressure)
 		: Event( win ), mInitiator( initiator ), mPos( x, y ), mModifiers( modifiers ), mWheelIncrement( wheelIncrement ), mNativeModifiers( nativeModifiers ), mSubPos(subPosX, subPosY), mTilt(tiltX, tiltY), mPressure(pressure)
 	{}
 

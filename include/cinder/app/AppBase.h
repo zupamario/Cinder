@@ -216,6 +216,8 @@ class AppBase {
 	virtual void	resize() {}
 	//! Override to receive file-drop events.	
 	virtual void	fileDrop( FileDropEvent event ) {}
+	//! Override to receive tablet proximity events.
+	virtual void	tabletProximity( TabletProximityEvent event ) {}
 	
 	//! Override to cleanup any resources before app destruction
 	virtual void	cleanup() {}

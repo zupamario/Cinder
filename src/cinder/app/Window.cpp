@@ -439,5 +439,14 @@ void Window::emitFileDrop( FileDropEvent *event )
 		getApp()->fileDrop( *event );
 }
 
+void Window::emitTabletProximity( TabletProximityEvent *event )
+{
+	getRenderer()->makeCurrentContext( true );
+	
+	CollectorEvent<TabletProximityEvent> collector( event );
+	mSignalTabletProximity.emit( collector, *event );
+	if( ! event->isHandled() )
+		getApp()->tabletProximity( *event );
+}
 
 } } // namespace cinder::app
