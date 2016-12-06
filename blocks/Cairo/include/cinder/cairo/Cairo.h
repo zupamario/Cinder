@@ -401,6 +401,7 @@ private:
 	cairo_font_options_t	*mCairoFontOptions;
 };
 
+/*
 class FontFace 
 {
 public:
@@ -439,6 +440,7 @@ public:
 private:
 	cairo_scaled_font_t	*mCairoScaledFont;
 };
+ */
 
 /*class Glyph
 {
@@ -678,6 +680,7 @@ class Context
 	void        deviceToUser( double *x, double *y );
 	void        deviceToUserDistance( double *dx, double *dy );
 	
+    /*
 // Text/font functions
 	void		setFont( const cinder::Font &font );
 	void        selectFontFace( const std::string &family, int32_t slant, int32_t weight );
@@ -701,7 +704,7 @@ class Context
 	TextExtents	textExtents( const std::string &s );
 	//void        glyphExtents( const Glyph *glyphs, int num_glyphs, TextExtents *extents );	// glyphs is an array of cairo_glyph_t
 	//void		glyphExtents( const GlyphArray &glyphs, int num_glyphs, TextExtents *extents );
-
+*/
 	std::string	statusToString() const;
 
   protected:
