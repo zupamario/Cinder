@@ -41,6 +41,8 @@
 #include <cxxabi.h>
 #include <execinfo.h>
 
+#import "CustomNSApplication.h"
+
 using namespace std;
 
 namespace cinder { namespace app {
@@ -226,7 +228,7 @@ fs::path PlatformCocoa::getOpenFilePath( const fs::path &initialPath, const vect
 	// Due to bug #960: https://github.com/cinder/Cinder/issues/960 We need to force the background window
 	// to be actually in the background when we're fullscreen. Was true of 10.9 and 10.10
 	if( app::AppBase::get() && app::getWindow() && app::getWindow()->isFullScreen() )
-		[[[NSApplication sharedApplication] mainWindow] orderBack:nil];
+		[[[CustomNSApplication sharedApplication] mainWindow] orderBack:nil];
 
 	if( resultCode == NSFileHandlingPanelOKButton ) {
 		NSString *result = [[[cinderOpen URLs] firstObject] path];
@@ -259,7 +261,7 @@ fs::path PlatformCocoa::getFolderPath( const fs::path &initialPath )
 	// Due to bug #960: https://github.com/cinder/Cinder/issues/960 We need to force the background window
 	// to be actually in the background when we're fullscreen. Was true of 10.9 and 10.10
 	if( app::AppBase::get() && app::getWindow() && app::getWindow()->isFullScreen() )
-		[[[NSApplication sharedApplication] mainWindow] orderBack:nil];
+		[[[CustomNSApplication sharedApplication] mainWindow] orderBack:nil];
 
 	if( resultCode == NSFileHandlingPanelOKButton ) {
 		NSString *result = [[[cinderOpen URLs] firstObject] path];
@@ -315,7 +317,7 @@ fs::path PlatformCocoa::getSaveFilePath( const fs::path &initialPath, const vect
 	// Due to bug #960: https://github.com/cinder/Cinder/issues/960 We need to force the background window
 	// to be actually in the background when we're fullscreen. Was true of 10.9 and 10.10
 	if( app::AppBase::get() && app::getWindow() && app::getWindow()->isFullScreen() )
-		[[[NSApplication sharedApplication] mainWindow] orderBack:nil];
+		[[[CustomNSApplication sharedApplication] mainWindow] orderBack:nil];
 	
 	if( resultCode == NSFileHandlingPanelOKButton ) {
 		return fs::path( [[[cinderSave URL] path] UTF8String] );

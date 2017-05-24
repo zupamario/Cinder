@@ -1027,6 +1027,7 @@
 		11FD37E41A8EDB9E002B6EA9 /* Signals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11FD37E31A8EDB9E002B6EA9 /* Signals.cpp */; };
 		11FD37E51A8EDB9E002B6EA9 /* Signals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11FD37E31A8EDB9E002B6EA9 /* Signals.cpp */; };
 		11FD37E61A8EDB9E002B6EA9 /* Signals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11FD37E31A8EDB9E002B6EA9 /* Signals.cpp */; };
+		1607309C1ED44E41004E5BD2 /* CustomNSApplication.m in Sources */ = {isa = PBXBuildFile; fileRef = 1607309B1ED44E41004E5BD2 /* CustomNSApplication.m */; };
 		1659FC2D1DF6E87200008B85 /* WacomMultiTouch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1659FC2C1DF6E87200008B85 /* WacomMultiTouch.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		277C2CF01366632B00178A29 /* Matrix22.h in Headers */ = {isa = PBXBuildFile; fileRef = 277C2CEC1366632B00178A29 /* Matrix22.h */; };
 		277C2CF11366632B00178A29 /* Matrix33.h in Headers */ = {isa = PBXBuildFile; fileRef = 277C2CED1366632B00178A29 /* Matrix33.h */; };
@@ -1612,6 +1613,8 @@
 		11C6F75D1AA391FE0001FA5C /* ShaderPreprocessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ShaderPreprocessor.h; path = gl/ShaderPreprocessor.h; sourceTree = "<group>"; };
 		11C97C89192F0BD700A510B5 /* CurrentFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CurrentFunction.h; sourceTree = "<group>"; };
 		11FD37E31A8EDB9E002B6EA9 /* Signals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Signals.cpp; sourceTree = "<group>"; };
+		1607309B1ED44E41004E5BD2 /* CustomNSApplication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomNSApplication.m; sourceTree = "<group>"; };
+		1607309D1ED44E5E004E5BD2 /* CustomNSApplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomNSApplication.h; sourceTree = "<group>"; };
 		1659FC2C1DF6E87200008B85 /* WacomMultiTouch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WacomMultiTouch.framework; path = ../../../../Library/Frameworks/WacomMultiTouch.framework; sourceTree = "<group>"; };
 		277C2CEC1366632B00178A29 /* Matrix22.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix22.h; sourceTree = "<group>"; };
 		277C2CED1366632B00178A29 /* Matrix33.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix33.h; sourceTree = "<group>"; };
@@ -2584,6 +2587,8 @@
 				118CA40D1A9427F700841458 /* RendererImpl2dMacQuartz.mm */,
 				118CA4101A9427F700841458 /* RendererImplGlCocoaTouch.mm */,
 				118CA40C1A9427F700841458 /* RendererImplGlMac.mm */,
+				1607309D1ED44E5E004E5BD2 /* CustomNSApplication.h */,
+				1607309B1ED44E41004E5BD2 /* CustomNSApplication.m */,
 			);
 			name = cocoa;
 			path = app/cocoa;
@@ -3890,6 +3895,7 @@
 				111A5ED8191F703D005C3166 /* psy.c in Sources */,
 				43F78EF21516DAB700EB63B5 /* Json.cpp in Sources */,
 				111A5EE2191F703D005C3166 /* vorbisenc.c in Sources */,
+				1607309C1ED44E41004E5BD2 /* CustomNSApplication.m in Sources */,
 				118CA4211A9427F700841458 /* RendererImplGlMac.mm in Sources */,
 				0003F3DB1992D64100647C8B /* BufferObj.cpp in Sources */,
 				111A5FF8191F72AE005C3166 /* PanNode.cpp in Sources */,

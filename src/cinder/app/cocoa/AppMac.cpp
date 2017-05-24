@@ -24,6 +24,7 @@
 #include "cinder/app/cocoa/AppMac.h"
 #include "cinder/app/cocoa/AppImplMac.h"
 #include "cinder/Log.h"
+#include "CustomNSApplication.h"
 
 using namespace std;
 
@@ -47,7 +48,7 @@ AppMac::~AppMac()
 
 void AppMac::launch()
 {
-	[[NSApplication sharedApplication] run];
+	[[CustomNSApplication sharedApplication] run];
 	emitCleanup();
 }
 

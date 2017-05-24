@@ -32,6 +32,8 @@
 
 #import <OpenGL/OpenGL.h>
 
+#include "CustomNSApplication.h"
+
 using namespace cinder;
 using namespace cinder::app;
 
@@ -74,7 +76,7 @@ int WacomFingerCallback(WacomMTFingerCollection *fingerPacket, void *userData);
 	self = [super init];
 
 	// This needs to be called before creating any windows, as it internally constructs the shared NSApplication
-	[[NSApplication sharedApplication] setDelegate:self];
+	[[CustomNSApplication sharedApplication] setDelegate:self];
 
 	NSMenu *mainMenu = [[NSMenu alloc] init];
 	[NSApp setMainMenu:mainMenu];
@@ -333,7 +335,7 @@ int WacomFingerCallback(WacomMTFingerCollection *fingerPacket, void *userData);
 	// Due to bug #960: https://github.com/cinder/Cinder/issues/960 We need to force the background window
 	// to be actually in the background when we're fullscreen. Was true of 10.9 and 10.10
 	if( app::AppBase::get() && app::getWindow() && app::getWindow()->isFullScreen() )
-		[[[NSApplication sharedApplication] mainWindow] orderBack:nil];
+		[[[CustomNSApplication sharedApplication] mainWindow] orderBack:nil];
 
 	mApp->emitDidBecomeActive();
 }
