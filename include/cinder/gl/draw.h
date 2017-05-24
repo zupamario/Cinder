@@ -46,9 +46,9 @@ typedef std::shared_ptr<class VboMesh>			VboMeshRef;
 //! Draws the VboMesh \a mesh. Consider a gl::Batch as a faster alternative. Optionally specify a \a first vertex index and a \a count of vertices.
 void draw( const VboMeshRef &mesh, GLint first = 0, GLsizei count = -1 );
 //! Draws a Texture2d \a texture, fitting it to \a dstRect. Ignores currently bound shader.
-void draw( const Texture2dRef &texture, const Rectf &dstRect );
+void draw( const Texture2dRef &texture, const Rectf &dstRect, bool isBgr = false, bool desaturate = false );
 //! Draws a subregion \a srcArea of a Texture (expressed as upper-left origin pixels).
-void draw( const Texture2dRef &texture, const Area &srcArea, const Rectf &dstRect );
+void draw( const Texture2dRef &texture, const Area &srcArea, const Rectf &dstRect, bool isBgr = false, bool desaturate = false );
 void draw( const Texture2dRef &texture, const vec2 &dstOffset = vec2() );
 void draw( const PolyLine2 &polyLine );
 void draw( const PolyLine3 &polyLine );

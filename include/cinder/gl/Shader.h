@@ -37,10 +37,12 @@ class ShaderDef {
   public:
 	ShaderDef();
 
-	ShaderDef&		color();	
+	ShaderDef&		color();
+    ShaderDef&      bgrColor(bool isBgr);
 	ShaderDef&		texture( const TextureRef &tex = TextureRef() );
 	ShaderDef&		texture( GLenum target );
 	ShaderDef&		lambert();
+	ShaderDef&		desaturate(bool desaturate);
 	// Used by draw(TextureRef&) stock shader; scales ciPosition and ciTexCoord according to
 	// uniform "uPositionScale", "uPositionOffset", "uTexCoord0Scale", "uTexCoord0Offset"
 	ShaderDef&		uniformBasedPosAndTexCoord();
@@ -58,6 +60,8 @@ class ShaderDef {
 
 	bool					mColor;
 	bool					mLambert;
+    bool                    mBgrColor;
+	bool					mDesaturate;
 	
 	friend class EnvironmentCore;
 	friend class EnvironmentEs;

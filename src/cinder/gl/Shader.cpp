@@ -30,7 +30,7 @@ using namespace std;
 namespace cinder { namespace gl {
 
 ShaderDef::ShaderDef()
-	: mTextureMapping( false ), mTextureMappingRectangleArb( false ), mColor( false ), mLambert( false ), mUniformBasedPosAndTexCoord( false )
+	: mTextureMapping( false ), mTextureMappingRectangleArb( false ), mColor( false ), mBgrColor(false), mLambert( false ), mUniformBasedPosAndTexCoord( false ), mDesaturate(false)
 {
 	mTextureSwizzleMask[0] = GL_RED;
 	mTextureSwizzleMask[1] = GL_GREEN; 
@@ -72,7 +72,19 @@ ShaderDef& ShaderDef::color()
 	mColor = true;
 	return *this;
 }
+	
+ShaderDef& ShaderDef::bgrColor(bool isBgr)
+{
+	mBgrColor = isBgr;
+	return *this;
+}
 
+ShaderDef& ShaderDef::desaturate(bool desaturate)
+{
+	mDesaturate = desaturate;
+	return *this;
+}
+	
 ShaderDef& ShaderDef::lambert()
 {
 	mLambert = true;
@@ -128,6 +140,10 @@ bool ShaderDef::operator<( const ShaderDef &rhs ) const
 		return mTextureSwizzleMask[3] < rhs.mTextureSwizzleMask[3];	
 	if( rhs.mLambert != mLambert )
 		return rhs.mLambert;
+	if( rhs.mBgrColor != mBgrColor )
+		return rhs.mBgrColor;
+	if (rhs.mDesaturate != mDesaturate)
+		return rhs.mDesaturate;
 	
 	return false;
 }

@@ -248,7 +248,7 @@ void drawStrokedCube( const vec3 &center, const vec3 &size )
 	ctx->popVao();
 }
 
-void draw( const TextureRef &texture, const Area &srcArea, const Rectf &dstRect )
+void draw( const TextureRef &texture, const Area &srcArea, const Rectf &dstRect, bool isBgr, bool desaturate )
 {
 	if( ! texture )
 		return;
@@ -261,7 +261,7 @@ void draw( const TextureRef &texture, const Area &srcArea, const Rectf &dstRect 
 	ScopedBuffer vboScp( ctx->getDrawTextureVbo() );
 	ScopedTextureBind texBindScope( texture );
 
-	auto glsl = getStockShader( ShaderDef().uniformBasedPosAndTexCoord().color().texture( texture ) );
+	auto glsl = getStockShader( ShaderDef().uniformBasedPosAndTexCoord().color().texture( texture ).bgrColor(isBgr).desaturate(desaturate) );
 	ScopedGlslProg glslScp( glsl );
 	glsl->uniform( "uTex0", 0 );
 	glsl->uniform( "uPositionOffset", dstRect.getUpperLeft() );
@@ -273,12 +273,12 @@ void draw( const TextureRef &texture, const Area &srcArea, const Rectf &dstRect 
 	ctx->drawArrays( GL_TRIANGLE_STRIP, 0, 4 );
 }
 
-void draw( const TextureRef &texture, const Rectf &dstRect )
+void draw( const TextureRef &texture, const Rectf &dstRect, bool isBgr, bool desaturate )
 {
 	if( ! texture )
 		return;
 
-	draw( texture, texture->getBounds(), dstRect );
+	draw( texture, texture->getBounds(), dstRect, isBgr, desaturate );
 }
 
 

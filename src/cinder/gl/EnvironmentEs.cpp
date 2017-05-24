@@ -289,8 +289,13 @@ std::string	EnvironmentEs::generateFragmentShader( const ShaderDef &shader )
 	
 	s +=		"	gl_FragColor = vec4( 1 )";
 	
-	if( shader.mTextureMapping ) 
-		s +=	" * texture2D( uTex0, TexCoord.st )";
+	if( shader.mTextureMapping ) {
+        if (shader.mBgrColor) {
+			s +=	" * texture2D( uTex0, TexCoord.st ).bgra";
+		} else {
+			s +=	" * texture2D( uTex0, TexCoord.st )";
+		}
+	}
 	
 	if( shader.mColor ) 
 		s +=	" * Color";
@@ -299,6 +304,11 @@ std::string	EnvironmentEs::generateFragmentShader( const ShaderDef &shader )
 		s +=	" * vec4( vec3( lambert ), 1.0 )";
 
 	s +=		";\n";
+	
+	if (shader.mDesaturate) {
+		s += "float bw = (min(gl_FragColor.r, min(gl_FragColor.g, gl_FragColor.b)) + max(gl_FragColor.r, max(gl_FragColor.g, gl_FragColor.b))) * 0.5 * 0.8;";
+		s += "gl_FragColor = vec4(bw, bw, bw, gl_FragColor.a);";
+	}
 	
 	s +=		"}\n";
 	
