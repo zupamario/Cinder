@@ -58,6 +58,8 @@
 
 	::IOPMAssertionID				mIdleSleepAssertionID;
 	::IOPMAssertionID				mDisplaySleepAssertionID;
+	
+	NSDate *pauseStart, *previousFireDate;
 }
 
 @property(retain, nonatomic) NSMutableArray *windows;
@@ -79,6 +81,8 @@
 - (void)setFrameRate:(float)frameRate;
 - (void)disableFrameRate;
 - (bool)isFrameRateEnabled;
+- (void)pauseAnimation;
+- (void)resumeAnimation;
 
 - (cinder::app::RendererRef)findSharedRenderer:(cinder::app::RendererRef)match;
 - (cinder::app::WindowRef)getWindow;

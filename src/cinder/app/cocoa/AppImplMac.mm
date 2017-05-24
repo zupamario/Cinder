@@ -145,6 +145,21 @@ int WacomFingerCallback(WacomMTFingerCollection *fingerPacket, void *userData);
 	[[NSRunLoop currentRunLoop] addTimer:mAnimationTimer forMode:NSEventTrackingRunLoopMode];
 }
 
+- (void)pauseAnimation
+{
+	pauseStart = [[NSDate dateWithTimeIntervalSinceNow:0] retain];
+	previousFireDate = [[mAnimationTimer fireDate] retain];
+	[mAnimationTimer setFireDate:[NSDate distantFuture]];
+}
+
+- (void)resumeAnimation
+{
+	float pauseTime = -1*[pauseStart timeIntervalSinceNow];
+	[mAnimationTimer setFireDate:[previousFireDate initWithTimeInterval:pauseTime sinceDate:previousFireDate]];
+	[pauseStart release];
+	[previousFireDate release];
+}
+
 - (void)timerFired:(NSTimer *)t
 {
 	if( ! ((PlatformCocoa*)Platform::get())->isInsideModalLoop() ) {

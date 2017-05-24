@@ -70,6 +70,16 @@ void AppMac::quit()
 {
 	[mImpl quit];
 }
+	
+void AppMac::pauseAnimation()
+{
+	[mImpl pauseAnimation];
+}
+
+void AppMac::resumeAnimation()
+{
+	[mImpl resumeAnimation];
+}
 
 float AppMac::getFrameRate() const
 {
