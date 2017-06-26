@@ -34,14 +34,13 @@
 #if defined( CINDER_MAC )
 	#import <Cocoa/Cocoa.h>
 	#import <IOKit/graphics/IOGraphicsLib.h>
+	#import "CustomNSApplication.h"
 #else
 	#import <Foundation/Foundation.h>
 	#import <UIKit/UIKit.h>
 #endif
 #include <cxxabi.h>
 #include <execinfo.h>
-
-#import "CustomNSApplication.h"
 
 using namespace std;
 
