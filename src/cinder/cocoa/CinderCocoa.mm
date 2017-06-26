@@ -489,6 +489,18 @@ ImageSourceCgImage::ImageSourceCgImage( ::CGImageRef imageRef, ImageSource::Opti
 					mColorTable[c] = Color8u( colorTable[c*3+0], colorTable[c*3+1], colorTable[c*3+2] );
 			}
 			break;
+			case kCGColorSpaceModelCMYK: {
+				setColorModel(ImageIo::CM_RGB);
+				setChannelOrder(ImageIo::RGBA);
+				
+				auto colorSpace = CGColorSpaceCreateDeviceRGB();
+				auto ctx = CGBitmapContextCreate(NULL, mWidth, mHeight, 8, 0, colorSpace, kCGImageAlphaNoneSkipLast);
+				CGContextDrawImage(ctx, CGRectMake(0, 0, mWidth, mHeight), imageRef);
+				auto convertedImage = CGBitmapContextCreateImage(ctx);
+				mImageRef = shared_ptr<CGImage>( convertedImage, ::CGImageRelease );
+				CGContextRelease(ctx);
+			}
+			break;
 			default: // we only support Gray and RGB data for now
 				throw ImageIoExceptionIllegalColorModel( "Core Graphics unexpected data type" );
 			break;
