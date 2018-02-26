@@ -30,7 +30,7 @@
 #include "cinder/Utilities.h"
 
 #include <string>
-#include <boost/container/list.hpp>
+#include <list>
 
 namespace Json {
 	class Value;
@@ -42,7 +42,7 @@ class JsonTree {
   public:
 	
 	//! \cond
-	typedef boost::container::list<JsonTree> Container;
+	typedef std::list<JsonTree> Container;
 
 	typedef Container::const_iterator ConstIter;
 	typedef Container::iterator Iter;
@@ -168,6 +168,8 @@ class JsonTree {
 	const JsonTree&					getChild( size_t index ) const;
 	//! Returns a reference to the node's list of children nodes.
 	const Container&				getChildren() const;
+	//! Returns a reference to the node's list of children nodes.
+	Container&				getChildren();
 	//! Returns the number of child nodes.
 	size_t							getNumChildren() const	{ return getChildren().size(); }
 
