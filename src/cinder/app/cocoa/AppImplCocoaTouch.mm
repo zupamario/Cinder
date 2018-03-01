@@ -97,7 +97,7 @@ using namespace cinder::app;
 	self = [super init];
 
 	mApp = app;
-	mAnimationFrameInterval = 1;
+	mFramerate = 60;
 	mAnimating = NO;
 	mUpdateHasFired = NO;
 	mSetupHasFired = NO;
@@ -111,7 +111,11 @@ using namespace cinder::app;
 	[center addObserver:self selector:@selector(screenDidDisconnect:) name:UIScreenDidDisconnectNotification object:nil];
 	[center addObserver:self selector:@selector(screenModeDidChange:) name:	UIScreenModeDidChangeNotification object:nil];
 
-	mAnimationFrameInterval = std::max<float>( 1.0f, floor( 60.0f / settings.getFrameRate() + 0.5f ) );
+	mFramerate = settings.getFrameRate();
+	NSInteger maxFps = [[UIScreen mainScreen] maximumFramesPerSecond];
+	if (mFramerate > maxFps) {
+		mFramerate = maxFps;
+	}
 
 	// build our list of requested formats; an empty list implies we should make the default window format
 	std::vector<Window::Format> formats( settings.getWindowFormats() );
@@ -174,7 +178,7 @@ using namespace cinder::app;
 {
 	if( ! mAnimating ) {
 		mDisplayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkDraw:)];
-		[mDisplayLink setFrameInterval:mAnimationFrameInterval];
+		[mDisplayLink setPreferredFramesPerSecond:mFramerate];
 		[mDisplayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 
 		mAnimating = TRUE;
@@ -283,9 +287,14 @@ using namespace cinder::app;
 
 - (void)setFrameRate:(float)frameRate
 {
-	mAnimationFrameInterval = std::max<float>( 1.0f, floor( 60.0f / frameRate + 0.5f ) );
+	mFramerate = static_cast<NSInteger>(frameRate);
+	NSInteger maxFps = [[UIScreen mainScreen] maximumFramesPerSecond];
+	if (mFramerate > maxFps) {
+		mFramerate = maxFps;
+	}
+
 	if( mDisplayLink )
-		[mDisplayLink setFrameInterval:mAnimationFrameInterval];
+		[mDisplayLink setPreferredFramesPerSecond:mFramerate];
 }
 
 - (void)showKeyboard:(const AppCocoaTouch::KeyboardOptions &)options

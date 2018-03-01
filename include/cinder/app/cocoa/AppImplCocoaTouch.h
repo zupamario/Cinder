@@ -56,7 +56,7 @@
 	bool								mSetupHasFired;
 	bool								mUpdateHasFired;
 	bool								mAnimating;
-	NSInteger 							mAnimationFrameInterval;
+	NSInteger 							mFramerate;
 	bool								mProximityStateIsClose;
 	bool								mIsUnplugged;
 	bool								mStatusBarShouldHide;

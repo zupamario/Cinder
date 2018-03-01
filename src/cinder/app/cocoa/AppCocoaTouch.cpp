@@ -208,7 +208,7 @@ void AppCocoaTouch::hideStatusBar( AppCocoaTouch::StatusBarAnimation animation )
 //! Returns the maximum frame-rate the App will attempt to maintain.
 float AppCocoaTouch::getFrameRate() const
 {
-	return 60.0f / mImpl->mAnimationFrameInterval;
+	return mImpl->mFramerate;
 }
 
 //! Sets the maximum frame-rate the App will attempt to maintain.
