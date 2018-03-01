@@ -37,7 +37,7 @@
 
 namespace cinder {
 #if defined( CINDER_WINRT ) || ( defined( _MSC_VER ) && ( _MSC_VER >= 1900 ) )
-	namespace fs = std::tr2::sys;
+	namespace fs = std::experimental::filesystem;
 } // namespace cinder
 #else
 	namespace fs = boost::filesystem;

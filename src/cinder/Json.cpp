@@ -319,6 +319,13 @@ void JsonTree::pushBack( const JsonTree &newChild )
 	mChildren.push_back( newChild );
 	mChildren.back().mParent = this;
     mValue = "";
+
+	// Parent pointer of added childs children is now broken because it is no longer the object passed into this method
+	JsonTree& addedChild = mChildren.back();
+	JsonTree::Container& addedChildsChildren = addedChild.getChildren();
+	for (auto& c : addedChildsChildren) {
+		c.mParent = &addedChild;
+	}
 }
 
 void JsonTree::removeChild( size_t index )
@@ -450,6 +457,11 @@ const JsonTree& JsonTree::getChild( size_t index ) const
 const JsonTree::Container& JsonTree::getChildren() const
 { 
 	return mChildren; 
+}
+
+JsonTree::Container& JsonTree::getChildren()
+{
+	return mChildren;
 }
 
 bool JsonTree::hasChild( const string &relativePath, bool caseSensitive, char separator ) const
