@@ -217,8 +217,11 @@ void CameraUi::mouseDrag( const vec2 &mousePos, bool leftDown, bool middleDown, 
 		float deltaX = ( mousePos.x - mInitialMousePos.x ) / -100.0f;
 		float deltaY = ( mousePos.y - mInitialMousePos.y ) / 100.0f;
 		vec3 mW = normalize( mInitialCam.getViewDirection() );
-		bool invertMotion = ( mInitialCam.getOrientation() * mInitialCam.getWorldUp() ).y < 0.0f;
-        invertMotion = false;
+
+		// Check if camera is oriented upside down.
+		// This is dependent on the camera axis which point away from the camera in view direction.
+		// In our case this is the (0,1,0) axis.
+		bool invertMotion = (mInitialCam.getOrientation() * glm::vec3(0.0f,1.0f,0.0f)).z < 0.0f;
 		
 		vec3 mU = normalize( cross( mInitialCam.getWorldUp(), mW ) );
 
