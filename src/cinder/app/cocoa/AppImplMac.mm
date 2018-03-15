@@ -157,7 +157,9 @@ int WacomFingerCallback(WacomMTFingerCollection *fingerPacket, void *userData);
 - (void)resumeAnimation
 {
 	float pauseTime = -1*[pauseStart timeIntervalSinceNow];
-	[mAnimationTimer setFireDate:[previousFireDate initWithTimeInterval:pauseTime sinceDate:previousFireDate]];
+	NSDate* newFireDate = [previousFireDate initWithTimeInterval:pauseTime sinceDate:previousFireDate];
+	[mAnimationTimer setFireDate:newFireDate];
+	[newFireDate release];
 	[pauseStart release];
 	[previousFireDate release];
 }
